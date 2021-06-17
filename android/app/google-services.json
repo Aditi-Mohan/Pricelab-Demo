@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "2133543157",
+    "project_id": "pricelabdemo",
+    "storage_bucket": "pricelabdemo.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2133543157:android:5686485d940a7b91d7ddbc",
+        "android_client_info": {
+          "package_name": "com.example.pricelabdemo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2133543157-7vskin45gpn6s1eacc6n2nsl9tnevpo0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNZhOVJ_FeMBEOjCD40zdJnmRiaB-cxOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2133543157-7vskin45gpn6s1eacc6n2nsl9tnevpo0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
