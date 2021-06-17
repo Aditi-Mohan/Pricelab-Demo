@@ -29,11 +29,14 @@ class _LogoState extends State<Logo> {
                 top: 8,
                 child: Hero(
                   tag: 'name',
-                  child: Text("Pricelab",
-                    style: TextStyle(
-                      color: Color.fromRGBO(28, 202, 150, 1),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 42,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Text("Pricelab",
+                      style: TextStyle(
+                        color: Color.fromRGBO(28, 202, 150, 1),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 42,
+                      ),
                     ),
                   ),
                 ),

@@ -32,7 +32,12 @@ class _LogoScreenState extends State<LogoScreen> {
                     totalRepeatCount: 2,
                     animatedTexts: [TyperAnimatedText("Pricelab")],
                     onFinished: () {
-                      Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => LoginScreen()));
+                      Navigator.of(context).pushReplacement(
+                          PageRouteBuilder(
+                            transitionDuration: Duration(milliseconds: 700),
+                            pageBuilder: (_,__,___) => LoginScreen()
+                          )
+                      );
                     },
                   ),
                 ),

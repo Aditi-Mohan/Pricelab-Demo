@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
-//import 'package:google_sign_in/google_sign_in.dart';
 import 'utils/google_signin_button.dart';
+import 'services/auth_service.dart';
 
 
 import 'utils/showup_animation.dart';
 import 'utils/logo.dart';
+import '/home_page.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -21,7 +21,7 @@ class _LoginScreenState extends State<LoginScreen> {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           Padding(
-            padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+            padding: const EdgeInsets.fromLTRB(0, 30+50, 0, 0),
             child: Logo(height: 60, width: MediaQuery.of(context).size.width),
           ),
           Padding(
@@ -41,7 +41,18 @@ class _LoginScreenState extends State<LoginScreen> {
             padding: const EdgeInsets.fromLTRB(0, 45, 0, 0),
             child: ShowUp(
               delay: 1,
-              child: GoogleSignInButton(),
+              child: GestureDetector(
+                onTap: () async {
+                  AuthService auth = AuthService();
+                  bool res = await auth.signInWithGoogle();
+                  print(res);
+                  if(res) {
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => HomePage()));
+                  }
+                },
+                  child: GoogleSignInButton()
+              ),
             ),
           ),
         ],
