@@ -73,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   print(res);
                   if(res) {
                     bool dec = await auth.userExists();
+                    print(dec);
                     if(dec) {
                       Navigator.of(context).pushReplacement(
                           MaterialPageRoute(builder: (context) => RecentScreen()));

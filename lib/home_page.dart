@@ -20,6 +20,7 @@ class _HomePageState extends State<HomePage> {
   List<int> selectedVariants = [];
   bool loaded = false;
   int selectedBank = -1;
+  bool usedOffer = false;
 
   Future<List<Bank>?> getBanksAndVar() async {
     try {
@@ -40,8 +41,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<List<Offer>?> getOffers() async {
-    List<String> vars =
-        selectedVariants.map((e) => banks[selectedBank].variants![e]).toList();
+    List<String> vars = selectedVariants.map((e) {
+      //print(banks[selectedBank].variants![e]);
+      return banks[selectedBank].variants![e];
+    }).toList();
     try {
       QuerySnapshot q = await _firestore
           .collection("offers")
@@ -51,6 +54,8 @@ class _HomePageState extends State<HomePage> {
       List<Offer> offers = [];
       q.docs.forEach((doc) {
         int index = vars.indexOf(doc.id);
+        //print(doc.id);
+        //print(index);
         if (index != -1) {
           if (doc.data() == null) throw ("Doc empty");
           var d = (doc.data() as Map);
@@ -86,9 +91,8 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        AuthService auth = AuthService();
-        await auth.signOut();
-        return true;
+        Navigator.of(context).pop(usedOffer);
+        return false;
       },
       child: Scaffold(
         key: _key,
@@ -124,262 +128,265 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
             ),
-            Container(
-                height: MediaQuery.of(context).size.height -
-                    30 -
-                    (26 * 2) -
-                    90 -
-                    30 -
-                    30 -
-                    (selectedBank != -1 ? 53 : 0),
-                child: Builder(
-                  builder: (context) {
-                    double _height = 63;
-                    double _selectedHeight = 400;
-                    if (loaded) {
-                      return ListView.builder(
-                        itemCount: banks.length,
-                        itemBuilder: (context, i) {
-                          return Padding(
-                            padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
-                            child: GestureDetector(
-                              onTap: () {
-                                if (selectedBank == i) {
-                                  setState(() {
-                                    selectedBank = -1;
-                                  });
-                                } else {
-                                  setState(() {
-                                    selectedBank = i;
-                                    selectedVariants = [];
-                                  });
-                                }
-                              },
-                              child: AnimatedContainer(
-                                duration: Duration(milliseconds: 300),
-                                curve: Curves.fastOutSlowIn,
-                                height:
-                                    i == selectedBank ? _selectedHeight : _height,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0)),
-                                    border: Border.all(
-                                        color: Color.fromRGBO(193, 193, 193, 1)),
-                                  ),
-                                  child: Column(
-                                    children: [
-                                      Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius: BorderRadius.all(
-                                              Radius.circular(5.0)),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(
-                                                  193, 193, 193, 1)),
-                                          color: i == selectedBank
-                                              ? Color.fromRGBO(25, 112, 80, 1)
-                                              : Colors.white,
-                                        ),
-                                        child: Row(
-                                          children: [
-                                            Padding(
-                                              padding: const EdgeInsets.all(18.0),
-                                              child: Text(
-                                                banks[i].name,
-                                                style: TextStyle(
-                                                  color: i == selectedBank
-                                                      ? Colors.white
-                                                      : Color.fromRGBO(
-                                                          104, 132, 95, 0.75),
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 20,
+            ShowUp(
+              delay: 1,
+              child: Container(
+                  height: MediaQuery.of(context).size.height -
+                      30 -
+                      (26 * 2) -
+                      90 -
+                      30 -
+                      30 -
+                      (selectedBank != -1 ? 53 : 0),
+                  child: Builder(
+                    builder: (context) {
+                      double _height = 63;
+                      double _selectedHeight = 400;
+                      if (loaded) {
+                        return ListView.builder(
+                          itemCount: banks.length,
+                          itemBuilder: (context, i) {
+                            return Padding(
+                              padding: const EdgeInsets.fromLTRB(20, 10, 20, 0),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (selectedBank == i) {
+                                    setState(() {
+                                      selectedBank = -1;
+                                    });
+                                  } else {
+                                    setState(() {
+                                      selectedBank = i;
+                                      selectedVariants = [];
+                                    });
+                                  }
+                                },
+                                child: AnimatedContainer(
+                                  duration: Duration(milliseconds: 300),
+                                  curve: Curves.fastOutSlowIn,
+                                  height:
+                                      i == selectedBank ? _selectedHeight : _height,
+                                  child: Container(
+                                    decoration: BoxDecoration(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5.0)),
+                                      border: Border.all(
+                                          color: Color.fromRGBO(193, 193, 193, 1)),
+                                    ),
+                                    child: Column(
+                                      children: [
+                                        Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0)),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(
+                                                    193, 193, 193, 1)),
+                                            color: i == selectedBank
+                                                ? Color.fromRGBO(25, 112, 80, 1)
+                                                : Colors.white,
+                                          ),
+                                          child: Row(
+                                            children: [
+                                              Padding(
+                                                padding: const EdgeInsets.all(18.0),
+                                                child: Text(
+                                                  banks[i].name,
+                                                  style: TextStyle(
+                                                    color: i == selectedBank
+                                                        ? Colors.white
+                                                        : Color.fromRGBO(
+                                                            104, 132, 95, 0.75),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
-                                              ),
-                                            )
-                                          ],
+                                              )
+                                            ],
+                                          ),
                                         ),
-                                      ),
-                                      Builder(
-                                        builder: (context) {
-                                          if (i == selectedBank)
-                                            return Padding(
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 10.0),
-                                              child: Text(
-                                                "Please choose your cards",
-                                                style: TextStyle(
-                                                  color: Color.fromRGBO(
-                                                      104, 132, 95, 0.75),
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 20,
+                                        Builder(
+                                          builder: (context) {
+                                            if (i == selectedBank)
+                                              return Padding(
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 10.0),
+                                                child: Text(
+                                                  "Please choose your cards",
+                                                  style: TextStyle(
+                                                    color: Color.fromRGBO(
+                                                        104, 132, 95, 0.75),
+                                                    fontWeight: FontWeight.w400,
+                                                    fontSize: 20,
+                                                  ),
                                                 ),
-                                              ),
-                                            );
-                                          else
-                                            return Container();
-                                        },
-                                      ),
-                                      Builder(
-                                        builder: (context) {
-                                          if (i == selectedBank) {
-                                            return Container(
-                                              height: 400 - 110,
-                                              child: ListView.builder(
-                                                  physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                  itemCount:
-                                                      banks[i].variants!.length,
-                                                  itemBuilder: (context, ind) {
-                                                    return Padding(
-                                                      padding: const EdgeInsets
-                                                              .fromLTRB(
-                                                          20, 0, 20, 10),
-                                                      child: GestureDetector(
-                                                        onTap: () {
-                                                          int index =
-                                                              selectedVariants
-                                                                  .indexOf(ind);
-                                                          if (index != -1) {
-                                                            setState(() {
-                                                              selectedVariants
-                                                                  .removeAt(
-                                                                      index);
-                                                            });
-                                                          } else {
-                                                            setState(() {
-                                                              selectedVariants
-                                                                  .add(ind);
-                                                            });
-                                                          }
-                                                        },
-                                                        child: Container(
-                                                          decoration:
-                                                              BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius.all(
-                                                                    Radius
-                                                                        .circular(
-                                                                            5.0)),
-                                                            border: Border.all(
-                                                                color: Color
-                                                                    .fromRGBO(
-                                                                        193,
-                                                                        193,
-                                                                        193,
-                                                                        1)),
-                                                            color: selectedVariants
-                                                                        .indexOf(
-                                                                            ind) !=
-                                                                    -1
-                                                                ? Color.fromRGBO(
-                                                                    25,
-                                                                    112,
-                                                                    80,
-                                                                    1)
-                                                                : Colors.white,
-                                                          ),
-                                                          child: Padding(
-                                                            padding:
-                                                                const EdgeInsets
-                                                                        .symmetric(
-                                                                    horizontal:
-                                                                        8.0),
-                                                            child: Row(
-                                                              mainAxisAlignment:
-                                                                  MainAxisAlignment
-                                                                      .spaceBetween,
-                                                              children: [
-                                                                Padding(
-                                                                  padding:
-                                                                      const EdgeInsets
-                                                                              .all(
-                                                                          18.0),
-                                                                  child:
-                                                                      Container(
-                                                                    //color: Colors.red,
-                                                                    width: (MediaQuery.of(context)
-                                                                                .size
-                                                                                .width /
-                                                                            2) +
-                                                                        30,
-                                                                    child: Text(
-                                                                      banks[i].variants![
-                                                                              ind] +
-                                                                          " Credit Card",
-                                                                      overflow:
-                                                                          TextOverflow
-                                                                              .ellipsis,
-                                                                      style:
-                                                                          TextStyle(
-                                                                        color: selectedVariants.indexOf(ind) !=
-                                                                                -1
-                                                                            ? Colors
-                                                                                .white
-                                                                            : Color.fromRGBO(
-                                                                                104,
-                                                                                132,
-                                                                                95,
-                                                                                0.75),
-                                                                        fontWeight:
-                                                                            FontWeight
-                                                                                .w400,
-                                                                        fontSize:
-                                                                            20,
+                                              );
+                                            else
+                                              return Container();
+                                          },
+                                        ),
+                                        Builder(
+                                          builder: (context) {
+                                            if (i == selectedBank) {
+                                              return Container(
+                                                height: 400 - 110,
+                                                child: ListView.builder(
+                                                    physics:
+                                                        NeverScrollableScrollPhysics(),
+                                                    itemCount:
+                                                        banks[i].variants!.length,
+                                                    itemBuilder: (context, ind) {
+                                                      return Padding(
+                                                        padding: const EdgeInsets
+                                                                .fromLTRB(
+                                                            20, 0, 20, 10),
+                                                        child: GestureDetector(
+                                                          onTap: () {
+                                                            int index =
+                                                                selectedVariants
+                                                                    .indexOf(ind);
+                                                            if (index != -1) {
+                                                              setState(() {
+                                                                selectedVariants
+                                                                    .removeAt(
+                                                                        index);
+                                                              });
+                                                            } else {
+                                                              setState(() {
+                                                                selectedVariants
+                                                                    .add(ind);
+                                                              });
+                                                            }
+                                                          },
+                                                          child: Container(
+                                                            decoration:
+                                                                BoxDecoration(
+                                                              borderRadius:
+                                                                  BorderRadius.all(
+                                                                      Radius
+                                                                          .circular(
+                                                                              5.0)),
+                                                              border: Border.all(
+                                                                  color: Color
+                                                                      .fromRGBO(
+                                                                          193,
+                                                                          193,
+                                                                          193,
+                                                                          1)),
+                                                              color: selectedVariants
+                                                                          .indexOf(
+                                                                              ind) !=
+                                                                      -1
+                                                                  ? Color.fromRGBO(
+                                                                      25,
+                                                                      112,
+                                                                      80,
+                                                                      1)
+                                                                  : Colors.white,
+                                                            ),
+                                                            child: Padding(
+                                                              padding:
+                                                                  const EdgeInsets
+                                                                          .symmetric(
+                                                                      horizontal:
+                                                                          8.0),
+                                                              child: Row(
+                                                                mainAxisAlignment:
+                                                                    MainAxisAlignment
+                                                                        .spaceBetween,
+                                                                children: [
+                                                                  Padding(
+                                                                    padding:
+                                                                        const EdgeInsets
+                                                                                .all(
+                                                                            18.0),
+                                                                    child:
+                                                                        Container(
+                                                                      //color: Colors.red,
+                                                                      width: (MediaQuery.of(context)
+                                                                                  .size
+                                                                                  .width /
+                                                                              2) +
+                                                                          30,
+                                                                      child: Text(
+                                                                        banks[i].variants![
+                                                                                ind] +
+                                                                            " Credit Card",
+                                                                        overflow:
+                                                                            TextOverflow
+                                                                                .ellipsis,
+                                                                        style:
+                                                                            TextStyle(
+                                                                          color: selectedVariants.indexOf(ind) !=
+                                                                                  -1
+                                                                              ? Colors
+                                                                                  .white
+                                                                              : Color.fromRGBO(
+                                                                                  104,
+                                                                                  132,
+                                                                                  95,
+                                                                                  0.75),
+                                                                          fontWeight:
+                                                                              FontWeight
+                                                                                  .w400,
+                                                                          fontSize:
+                                                                              20,
+                                                                        ),
                                                                       ),
                                                                     ),
                                                                   ),
-                                                                ),
-                                                                AnimatedContainer(
-                                                                  curve: Curves
-                                                                      .fastOutSlowIn,
-                                                                  duration: Duration(
-                                                                      milliseconds:
-                                                                          300),
-                                                                  height:
-                                                                      selectedVariants.indexOf(ind) !=
-                                                                              -1
-                                                                          ? 30
-                                                                          : 0,
-                                                                  width: selectedVariants
-                                                                              .indexOf(ind) !=
-                                                                          -1
-                                                                      ? 30
-                                                                      : 0,
-                                                                  child: selectedVariants
-                                                                              .indexOf(ind) !=
-                                                                          -1
-                                                                      ? Icon(
-                                                                          Icons
-                                                                              .check_circle,
-                                                                          color: Colors
-                                                                              .white,
-                                                                        )
-                                                                      : null,
-                                                                ),
-                                                              ],
+                                                                  AnimatedContainer(
+                                                                    curve: Curves
+                                                                        .fastOutSlowIn,
+                                                                    duration: Duration(
+                                                                        milliseconds:
+                                                                            300),
+                                                                    height:
+                                                                        selectedVariants.indexOf(ind) !=
+                                                                                -1
+                                                                            ? 30
+                                                                            : 0,
+                                                                    width: selectedVariants
+                                                                                .indexOf(ind) !=
+                                                                            -1
+                                                                        ? 30
+                                                                        : 0,
+                                                                    child: selectedVariants
+                                                                                .indexOf(ind) !=
+                                                                            -1
+                                                                        ? Icon(
+                                                                            Icons
+                                                                                .check_circle,
+                                                                            color: Colors
+                                                                                .white,
+                                                                          )
+                                                                        : null,
+                                                                  ),
+                                                                ],
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
-                                                      ),
-                                                    );
-                                                  }),
-                                            );
-                                          } else
-                                            return Container();
-                                        },
-                                      ),
-                                    ],
+                                                      );
+                                                    }),
+                                              );
+                                            } else
+                                              return Container();
+                                          },
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          );
-                        },
-                      );
-                    }
-                    return Container();
-                  },
-                )),
+                            );
+                          },
+                        );
+                      }
+                      return Container();
+                    },
+                  )),
+            ),
             Builder(
               builder: (context) {
                 if (selectedBank != -1) {
@@ -476,6 +483,9 @@ class _HomePageState extends State<HomePage> {
                                                   );
                                                   Navigator.of(context).pop();
                                                   await AuthService().recentOffers(offers[i]);
+                                                  setState(() {
+                                                    usedOffer = true;
+                                                  });
                                                 },
                                                 child: Container(
                                                   child: Padding(
