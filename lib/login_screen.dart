@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'utils/google_signin_button.dart';
 import 'services/auth_service.dart';
 
-
+import 'utils/google_signin_button.dart';
 import 'utils/showup_animation.dart';
 import 'utils/logo.dart';
 import '/home_page.dart';
+import '/recent_page.dart';
 
 class LoginScreen extends StatefulWidget {
   @override
@@ -45,10 +45,42 @@ class _LoginScreenState extends State<LoginScreen> {
                 onTap: () async {
                   AuthService auth = AuthService();
                   bool res = await auth.signInWithGoogle();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.all(Radius.circular(10.0))
+                          ),
+                          backgroundColor: Colors.white,
+                          behavior: SnackBarBehavior.floating,
+                          duration: Duration(seconds: 2),
+                          content: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Container(
+                                  height: 30,
+                                  child: Text(auth.message,
+                                    style: TextStyle(
+                                      color: Color.fromRGBO(25, 112, 80, 1),
+                                      fontWeight: FontWeight.w400,
+                                      fontSize: 18,
+                                    ),
+                                  )
+                              ),
+                            ],
+                          )
+                      )
+                  );
                   print(res);
                   if(res) {
-                    Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => HomePage()));
+                    bool dec = await auth.userExists();
+                    if(dec) {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => RecentScreen()));
+                    }
+                    else {
+                      Navigator.of(context).pushReplacement(
+                          MaterialPageRoute(builder: (context) => HomePage()));
+                    }
                   }
                 },
                   child: GoogleSignInButton()

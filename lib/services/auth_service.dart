@@ -2,6 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+import '/models/offer.dart';
+import '/models/user.dart';
+
+UserRepo _userRepo = UserRepo();
+
 class AuthService {
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -21,13 +26,42 @@ class AuthService {
       final UserCredential response = await _firebaseAuth.signInWithCredential(authCredential);
       if(response.user == null) throw("Could Not SignIn");
       final User? user = response.user;
+      _userRepo = UserRepo(uid: user!.uid.toString());
+      message = "Signed In as "+user.displayName.toString();
+      //print(user!.uid.toString());
       return true;
-      //TODO: save user
     }
     catch(err) {
       print("Error: $err");
       message = err.toString();
       return false;
+    }
+  }
+
+  Future<bool> userExists() async {
+    return await _firestore.collection('users').doc(_userRepo.uid).get().then((value) => value.exists);
+  }
+
+  Future<void> recentOffers(Offer offer) async {
+    DocumentSnapshot doc = await _firestore.collection('users').doc(_userRepo.uid).get();
+    if(doc.exists) {
+      bool alreadyExists = false;
+      ((doc.data() as Map)["recentOffers"] as List<dynamic>).forEach((element) {
+        if(element["offer"] == offer.title)
+          alreadyExists = true;
+      });
+      if(alreadyExists)
+        return;
+      _firestore.collection('users').doc(_userRepo.uid).update({
+        "recentOffers": (doc.data() as Map)["recentOffers"] + [{"offer": offer.title, "promoCode": offer.promoCode}]});
+    }
+    else {
+      await _firestore.collection('users').doc(_userRepo.uid).set(
+        {
+          "recentOffers": [{"offer": offer.title,
+            "promoCode": offer.promoCode,}]
+        }
+      );
     }
   }
 
