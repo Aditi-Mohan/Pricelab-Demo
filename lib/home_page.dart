@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import 'utils/showup_animation.dart';
 import 'models/bank.dart';
+import 'models/offer.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -36,32 +37,27 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Future<void> _showMyDialog() async {
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('AlertDialog Title'),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: const <Widget>[
-                Text('This is a demo alert dialog.'),
-                Text('Would you like to approve of this message?'),
-              ],
-            ),
-          ),
-          actions: <Widget>[
-            TextButton(
-              child: const Text('Approve'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
+  Future<List<Offer>?> getOffers() async {
+    List<String> vars = selectedVariants.map((e) => banks[selectedBank].variants![e]).toList();
+    try {
+      QuerySnapshot q = await _firestore.collection("offers").doc(banks[selectedBank].name).collection("variants").get();
+      List<Offer> offers = [];
+      q.docs.forEach((doc) {
+        int index = vars.indexOf(doc.id);
+        if(index != -1) {
+          if(doc.data() == null) throw("Doc empty");
+          var d = (doc.data() as Map);
+          String desc = "Available with "+banks[selectedBank].name+" "+banks[selectedBank].variants![index]+" Credit Card";
+          Offer o = Offer(title: d["offer"], description: desc, promoCode: d["promoCode"]);
+          offers.add(o);
+        }
+      });
+      return offers;
+    }
+    catch (err) {
+      print("Error: $err");
+      return null;
+    }
   }
 
   @override
@@ -229,7 +225,7 @@ class _HomePageState extends State<HomePage> {
                                                           children: [
                                                             Padding(
                                                               padding: const EdgeInsets.all(18.0),
-                                                              child: Text(banks[i].variants![ind],
+                                                              child: Text(banks[i].variants![ind]+" Credit Card",
                                                                 style: TextStyle(
                                                                   color: selectedVariants.indexOf(ind) != -1 ? Colors.white : Color.fromRGBO(104, 132, 95, 0.75),
                                                                   fontWeight: FontWeight.w400,
@@ -279,9 +275,12 @@ class _HomePageState extends State<HomePage> {
                     onTap: () async {
                       if(selectedVariants.length == 0) return;
                       else {
+                        List<Offer> offers = await getOffers() ?? [];
                         showDialog<String>(
                           context: context,
                           builder: (BuildContext context) => AlertDialog(
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.all(Radius.circular(22.0))),
                             title: Text("Here are your deals!",
                               style: TextStyle(
                                 color: Color.fromRGBO(104, 132, 95, 1),
@@ -289,11 +288,59 @@ class _HomePageState extends State<HomePage> {
                                 fontSize: 18,
                               ),
                             ),
-                            content: ListView.builder(
-                              itemCount: ,
-                              itemBuilder: (context, i) {
-
-                              },
+                            content: Container(
+                              width: MediaQuery.of(context).size.width-20,
+                              height: MediaQuery.of(context).size.height-300,
+                              child: ListView.builder(
+                                shrinkWrap: true,
+                                itemCount: offers.length,
+                                itemBuilder: (context, i) {
+                                  return Container(
+                                    child: Column(
+                                      children: [
+                                        Text(offers[i].title,
+                                          style: TextStyle(
+                                            color: Color.fromRGBO(104, 132, 95, 1),
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 18,
+                                          ),
+                                        ),
+                                        Text("Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor incididunt ut labore",
+                                          style: TextStyle(
+                                            color: Color.fromRGBO(132, 132, 132, 1),
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 14,
+                                          ),
+                                        ),
+                                        Text(offers[i].description ?? "",
+                                          style: TextStyle(
+                                            color: Color.fromRGBO(39, 123, 98, 1),
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 13,
+                                          ),
+                                        ),
+                                        ElevatedButton(
+                                            onPressed: (){},
+                                            child: Container(
+                                              height: 28,
+                                              decoration: BoxDecoration(
+                                                color: Color.fromRGBO(96, 196, 196, 1),
+                                                borderRadius: BorderRadius.circular(5.0)
+                                              ),
+                                              child: Text("Use Offer",
+                                                style: TextStyle(
+                                                  color: Color.fromRGBO(104, 132, 95, 1),
+                                                  fontWeight: FontWeight.w400,
+                                                  fontSize: 18,
+                                                ),
+                                              ),
+                                            )
+                                        )
+                                      ],
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         );
