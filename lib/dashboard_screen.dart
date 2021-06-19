@@ -79,12 +79,71 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                 padding: const EdgeInsets.all(8.0),
                                 child: GestureDetector(
                                   onTap: () {
-                                    Navigator.of(context).push(
-                                        PageRouteBuilder(
-                                            transitionDuration: Duration(milliseconds: 700),
-                                            pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id)
-                                        )
-                                    );
+                                    showDialog(context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text("View: "),
+                                      content: Container(
+                                        width: MediaQuery.of(context).size.width - 20,
+                                        height: 70,
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
+                                                ),
+                                                onPressed: ()  {
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).push(
+                                                      PageRouteBuilder(
+                                                          transitionDuration: Duration(milliseconds: 700),
+                                                          pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id, offers: false,)
+                                                      )
+                                                  );
+                                                },
+                                                child: Container(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                    child: Text("Variants",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                            ),
+                                            ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
+                                                ),
+                                                onPressed: ()  {
+                                                  Navigator.of(context).pop();
+                                                  Navigator.of(context).push(
+                                                      PageRouteBuilder(
+                                                          transitionDuration: Duration(milliseconds: 700),
+                                                          pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id, offers: true,)
+                                                      )
+                                                  );
+                                                },
+                                                child: Container(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                    child: Text("Offers",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                )
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ));
                                   },
                                   child: Hero(
                                     tag: banks[i].id,
@@ -111,7 +170,7 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
                                                   ),
                                                 ),
                                               ),
-                                              Text((banks[i].data()! as Map)["variants"].length.toString(),
+                                              Text((banks[i].data()! as Map)["variants"].length.toString()+" Card"+((banks[i].data()! as Map)["variants"].length == 1 ? "" : "s"),
                                                 style: TextStyle(
                                                   color: Color.fromRGBO(104, 132, 95, 0.75),
                                                   fontWeight: FontWeight.w400,
@@ -148,10 +207,11 @@ class DialogBody extends StatefulWidget {
 
 class _DialogBodyState extends State<DialogBody> {
   TextEditingController _controller = TextEditingController();
-  TextEditingController _controller1 = TextEditingController();
-  TextEditingController _controller2 = TextEditingController();
+
   bool enteredBank = false;
   String bank = "";
+  List<String> newVariants = [];
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -197,13 +257,47 @@ class _DialogBodyState extends State<DialogBody> {
                             ),
                           ),
                         ),
-                      ))
+                      )
+                  )
                 ],
               );
             }
             else {
               return  Column(
                 children: [
+                  Container(
+                    height: newVariants.length < 3 ?  newVariants.length * 60 : 200 ,
+                    child: ListView.builder(
+                      itemCount: newVariants.length,
+                      itemBuilder: (context, i) {
+                        return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: 40,
+                                decoration: BoxDecoration(
+                                  borderRadius:
+                                  BorderRadius.all(Radius.circular(5.0)),
+                                  border: Border.all(
+                                      color: Color.fromRGBO(193, 193, 193, 1)
+                                  ),
+                                ),
+                                child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Text(
+                                      newVariants[i],
+                                      style: TextStyle(
+                                        color: Color.fromRGBO(104, 132, 95, 1),
+                                        fontWeight: FontWeight.w400,
+                                        fontSize: 18,
+                                      ),
+                                    )
+                                )
+                            )
+                        );
+                      },
+                    ),
+                  ),
+                  Container(height: 20,),
                   Text("Variant Name:",
                     style: TextStyle(
                       color: Color.fromRGBO(104, 132, 95, 0.75),
@@ -215,26 +309,30 @@ class _DialogBodyState extends State<DialogBody> {
                     controller: _controller,
                   ),
                   Container(height: 20,),
-                  Text("Offer:",
-                    style: TextStyle(
-                      color: Color.fromRGBO(104, 132, 95, 0.75),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
+                  ElevatedButton(
+                      style: ButtonStyle(
+                        backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
+                      ),
+                      onPressed:() {
+                        if(_controller.value.text != "") {
+                          setState((){
+                            newVariants.add(_controller.value.text);
+                            _controller.text = "";
+                          });
+                        }
+                      },
+                    child: Container(
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        child: Text("Add",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.w400,
+                            fontSize: 18,
+                          ),
+                        ),
+                      ),
                     ),
-                  ),
-                  TextField(
-                    controller: _controller1,
-                  ),
-                  Container(height: 20,),
-                  Text("PromoCode:",
-                    style: TextStyle(
-                      color: Color.fromRGBO(104, 132, 95, 0.75),
-                      fontWeight: FontWeight.w400,
-                      fontSize: 20,
-                    ),
-                  ),
-                  TextField(
-                    controller: _controller2,
                   ),
                   Container(height: 20,),
                   ElevatedButton(
@@ -242,36 +340,30 @@ class _DialogBodyState extends State<DialogBody> {
                         backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
                       ),
                       onPressed: () async {
-                        if (_controller.value.text != "" || _controller1.value.text != "" || _controller2.value.text != "") {
-                          Map<String, String> details = {"variant": _controller.value.text, "offer": _controller1.value.text, "promoCode": _controller2.value.text};
-                          print(bank);
-                          print(details["variant"]);
-                          print(details["offer"]);
-                          print(details["promoCode"]);
-                          String body = json.encode({
-                            "bank": bank,
-                            "details": [
-                              {"variant": _controller.value.text, "offer": _controller1.value.text, "promoCode": _controller2.value.text}
-                              ],
-                          });
-                          print(body);
-//                          http.Response res = await http.post(
-//                              Uri.parse("https://us-central1-pricelabdemo.cloudfunctions.net/banks/addBank"),
-//                            headers: <String, String>{
-//                              'Content-Type': 'application/json; charset=UTF-8',
-//                            },
-//                            body: body
-//                          );
-//                          if(res.statusCode == 201)
-//                            Navigator.of(context).pop();
-//                          else
-//                            print(res.statusCode);
+                        if(_controller.value.text != "") {
+                          newVariants.add(_controller.value.text);
                         }
+                        String body = json.encode({
+                          "bank": bank,
+                          "variants": newVariants,
+                        });
+                        print(body);
+                        http.Response res = await http.post(
+                            Uri.parse("https://us-central1-pricelabdemo.cloudfunctions.net/banks/addBank"),
+                            headers: <String, String>{
+                              'Content-Type': 'application/json; charset=UTF-8',
+                            },
+                            body: body
+                        );
+                        if(res.statusCode == 201)
+                          Navigator.of(context).pop();
+                        else
+                          print(res.statusCode);
                       },
                       child: Container(
                         child: Padding(
                           padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                          child: Text("Add",
+                          child: Text("Finish",
                             style: TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w400,
@@ -279,7 +371,8 @@ class _DialogBodyState extends State<DialogBody> {
                             ),
                           ),
                         ),
-                      ))
+                      )
+                  )
                 ],
               );
             }
