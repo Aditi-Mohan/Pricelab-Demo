@@ -130,14 +130,9 @@ class _HomePageState extends State<HomePage> {
             ),
             ShowUp(
               delay: 1,
-              child: Container(
-                  height: MediaQuery.of(context).size.height -
-                      30 -
-                      (26 * 2) -
-                      90 -
-                      30 -
-                      30 -
-                      (selectedBank != -1 ? 53 : 0),
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                  height: MediaQuery.of(context).size.height - 30 - (26 * 2) - 90 - 30 - 30 - (selectedBank != -1 ? 53 : 0),
                   child: Builder(
                     builder: (context) {
                       double _height = 63;
@@ -385,12 +380,10 @@ class _HomePageState extends State<HomePage> {
                       }
                       return Container();
                     },
-                  )),
+                  )
+              ),
             ),
-            Builder(
-              builder: (context) {
-                if (selectedBank != -1) {
-                  return GestureDetector(
+            GestureDetector(
                       onTap: () async {
                         if (selectedVariants.length == 0)
                           return;
@@ -404,7 +397,7 @@ class _HomePageState extends State<HomePage> {
                                   borderRadius: BorderRadius.all(Radius.circular(22.0))
                               ),
                               title: Text(
-                                "Here are your deals!",
+                                offers.length == 0 ? "No Offers Avialable!" : "Here are your deals!",
                                 style: TextStyle(
                                   color: Color.fromRGBO(104, 132, 95, 1),
                                   fontWeight: FontWeight.w400,
@@ -414,104 +407,116 @@ class _HomePageState extends State<HomePage> {
                               content: Container(
                                 width: MediaQuery.of(context).size.width - 20,
                                 height: MediaQuery.of(context).size.height - 300,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: offers.length,
-                                  itemBuilder: (context, i) {
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Container(
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              offers[i].title,
-                                              textAlign: TextAlign.left,
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(104, 132, 95, 1),
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 18,
-                                              ),
-                                            ),
-                                            Text(
-                                              "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor incididunt ut labore",
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(132, 132, 132, 1),
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 14,
-                                              ),
-                                            ),
-                                            Text(
-                                              offers[i].description ?? "",
-                                              style: TextStyle(
-                                                color: Color.fromRGBO(39, 123, 98, 1),
-                                                fontWeight: FontWeight.w400,
-                                                fontSize: 13,
-                                              ),
-                                            ),
-                                            ElevatedButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(196, 196, 196, 1)),
-                                                ),
-                                                onPressed: () async {
-                                                  Clipboard.setData(ClipboardData(text: offers[i].promoCode));
-                                                  ScaffoldMessenger.of(context)
-                                                      .showSnackBar(
-                                                        SnackBar(
-                                                          shape: RoundedRectangleBorder(
-                                                              borderRadius: BorderRadius.all(Radius.circular(10.0))
-                                                          ),
-                                                          backgroundColor: Colors.white,
-                                                          behavior: SnackBarBehavior.floating,
-                                                          duration: Duration(seconds: 1),
-                                                          content: Row(
-                                                            mainAxisAlignment: MainAxisAlignment.center,
-                                                            children: [
-                                                              Container(
-                                                                height: 30,
-                                                                  child: Text("Copied to Clipboard!",
-                                                                  style: TextStyle(
-                                                                    color: Color.fromRGBO(25, 112, 80, 1),
-                                                                    fontWeight: FontWeight.w400,
-                                                                    fontSize: 18,
-                                                                  ),
-                                                                  )
-                                                              ),
-                                                            ],
-                                                          )
-                                                        )
-                                                  );
-                                                  Navigator.of(context).pop();
-                                                  await AuthService().recentOffers(offers[i]);
-                                                  setState(() {
-                                                    usedOffer = true;
-                                                  });
-                                                },
-                                                child: Container(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                    child: Text("Use Offer",
-                                                      style: TextStyle(
-                                                        color: Color.fromRGBO(104, 132, 95, 1),
-                                                        fontWeight: FontWeight.w400,
-                                                        fontSize: 18,
-                                                      ),
+                                child: Builder(
+                                  builder: (context) {
+                                    if(offers.length == 0) {
+                                      return Container(
+                                        child: Image(image: AssetImage("assets/images/inbox.png"), fit: BoxFit.fitWidth),
+                                      );
+                                    }
+                                    else {
+                                      return ListView.builder(
+                                        shrinkWrap: true,
+                                        itemCount: offers.length,
+                                        itemBuilder: (context, i) {
+                                          return Padding(
+                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                            child: Container(
+                                              child: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                children: [
+                                                  Text(
+                                                    offers[i].title,
+                                                    textAlign: TextAlign.left,
+                                                    style: TextStyle(
+                                                      color: Color.fromRGBO(104, 132, 95, 1),
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: 18,
                                                     ),
                                                   ),
-                                                ))
-                                          ],
-                                        ),
-                                      ),
-                                    );
+                                                  Text(
+                                                    "Lorem ipsum dolor sit amet, consectetur elit, sed do eiusmod tempor incididunt ut labore",
+                                                    style: TextStyle(
+                                                      color: Color.fromRGBO(132, 132, 132, 1),
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: 14,
+                                                    ),
+                                                  ),
+                                                  Text(
+                                                    offers[i].description ?? "",
+                                                    style: TextStyle(
+                                                      color: Color.fromRGBO(39, 123, 98, 1),
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: 13,
+                                                    ),
+                                                  ),
+                                                  ElevatedButton(
+                                                      style: ButtonStyle(
+                                                        backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(196, 196, 196, 1)),
+                                                      ),
+                                                      onPressed: () async {
+                                                        Clipboard.setData(ClipboardData(text: offers[i].promoCode));
+                                                        ScaffoldMessenger.of(context)
+                                                            .showSnackBar(
+                                                            SnackBar(
+                                                                shape: RoundedRectangleBorder(
+                                                                    borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                                                ),
+                                                                backgroundColor: Colors.white,
+                                                                behavior: SnackBarBehavior.floating,
+                                                                duration: Duration(seconds: 1),
+                                                                content: Row(
+                                                                  mainAxisAlignment: MainAxisAlignment.center,
+                                                                  children: [
+                                                                    Container(
+                                                                        height: 30,
+                                                                        child: Text("Copied to Clipboard!",
+                                                                          style: TextStyle(
+                                                                            color: Color.fromRGBO(25, 112, 80, 1),
+                                                                            fontWeight: FontWeight.w400,
+                                                                            fontSize: 18,
+                                                                          ),
+                                                                        )
+                                                                    ),
+                                                                  ],
+                                                                )
+                                                            )
+                                                        );
+                                                        Navigator.of(context).pop();
+                                                        await AuthService().recentOffers(offers[i]);
+                                                        setState(() {
+                                                          usedOffer = true;
+                                                        });
+                                                      },
+                                                      child: Container(
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                          child: Text("Use Offer",
+                                                            style: TextStyle(
+                                                              color: Color.fromRGBO(104, 132, 95, 1),
+                                                              fontWeight: FontWeight.w400,
+                                                              fontSize: 18,
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ))
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
+                                    }
                                   },
-                                ),
+                                )
                               ),
                             ),
                           );
                         }
                       },
-                      child: Container(
-                        height: 70,
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 300),
+                        height: selectedBank == -1 ? 0 : 70,
                         decoration: BoxDecoration(
                           color: selectedVariants.length != 0
                               ? Color.fromRGBO(25, 112, 80, 1)
@@ -519,23 +524,28 @@ class _HomePageState extends State<HomePage> {
                           borderRadius: BorderRadius.circular(10.0),
                         ),
                         width: MediaQuery.of(context).size.width,
-                        child: Center(
-                          child: Text(
-                            "View Available Offers",
-                            style: TextStyle(
-                              color: selectedVariants.length == 0
-                                  ? Color.fromRGBO(142, 142, 142, 1)
-                                  : Colors.white,
-                              fontWeight: FontWeight.w400,
-                              fontSize: 20,
-                            ),
-                          ),
-                        ),
-                      ));
-                } else
-                  return Container();
-              },
-            )
+                        child: Builder(
+                          builder: (context) {
+                            if(selectedBank == -1)
+                              return Container();
+                            else {
+                              return Center(
+                                child: Text(
+                                  "View Available Offers",
+                                  style: TextStyle(
+                                    color: selectedVariants.length == 0
+                                        ? Color.fromRGBO(142, 142, 142, 1)
+                                        : Colors.white,
+                                    fontWeight: FontWeight.w400,
+                                    fontSize: 20,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                        )
+                      )
+                  ),
           ],
         ),
       ),

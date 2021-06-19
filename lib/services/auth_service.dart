@@ -16,18 +16,18 @@ class AuthService {
   Future<bool> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
-      if(googleSignInAccount == null) throw("Account not found");
+      if(googleSignInAccount == null) throw("Account not found!");
       final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount.authentication;
-      if(googleSignInAuthentication == null) throw("Unable to Authenticate");
+      if(googleSignInAuthentication == null) throw("Unable to Authenticate!");
       final AuthCredential authCredential = GoogleAuthProvider.credential(
         idToken: googleSignInAuthentication.idToken,
         accessToken: googleSignInAuthentication.accessToken,
       );
       final UserCredential response = await _firebaseAuth.signInWithCredential(authCredential);
-      if(response.user == null) throw("Could Not SignIn");
+      if(response.user == null) throw("Could Not SignIn!");
       final User? user = response.user;
       _userRepo = UserRepo(uid: user!.uid.toString());
-      message = "Signed In as "+user.displayName.toString();
+      message = "Signed In as "+user.displayName.toString()+" !";
       //print(user!.uid.toString());
       return true;
     }
