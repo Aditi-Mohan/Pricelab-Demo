@@ -3,10 +3,10 @@ import 'dart:async';
 import 'package:flutter/cupertino.dart';
 
 class ShowUp extends StatefulWidget {
-  Widget child;
-  int delay;
+  final Widget child;
+  final Duration? delay;
 
-  ShowUp({required this.child, this.delay = 0});
+  ShowUp({required this.child, this.delay});
 
   @override
   _ShowUpState createState() => _ShowUpState();
@@ -28,11 +28,11 @@ class _ShowUpState extends State<ShowUp> with TickerProviderStateMixin {
 
     _animOffset = Tween<Offset>(begin: Offset(0.0, 0.35), end: Offset.zero).animate(_curve);
 
-    if(widget.delay == 0) {
+    if(widget.delay == null) {
       _controller.forward();
     }
     else {
-      Timer(Duration(seconds: widget.delay), () {_controller.forward();});
+      Timer(widget.delay!, () {_controller.forward();});
     }
   }
 

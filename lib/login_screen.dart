@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(20, 120, 0, 0),
             child: ShowUp(
-              delay: 1,
+              delay: Duration(seconds: 1),
               child: Text("Sign up or Login with your Google Account",
                 style: TextStyle(
                   color: Color.fromRGBO(104, 132, 95, 0.75),
@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 45, 0, 0),
             child: ShowUp(
-              delay: 1,
+              delay: Duration(seconds: 1),
               child: GestureDetector(
                 onTap: () async {
                   AuthService auth = AuthService();
@@ -93,7 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
             child: ShowUp(
-              delay: 1,
+              delay: Duration(seconds: 1),
               child: Text("Or",
                 style: TextStyle(
                   color: Color.fromRGBO(104, 132, 95, 0.75),
@@ -106,7 +106,7 @@ class _LoginScreenState extends State<LoginScreen> {
           Padding(
             padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
             child: ShowUp(
-              delay: 1,
+              delay: Duration(seconds: 1),
               child: GestureDetector(
                 onTap: () {
                   Navigator.of(context).push(NextPageRoute(nextScreen: DashBoardScreen()));

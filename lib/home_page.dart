@@ -24,7 +24,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<Bank>?> getBanksAndVar() async {
     try {
-      QuerySnapshot qs = await _firestore.collection("offers").get();
+      QuerySnapshot qs = await _firestore.collection("banks").get();
       List<Bank> banks = [];
       qs.docs.forEach((doc) {
         if (doc.data() == null) throw ("Doc empty");
@@ -45,27 +45,21 @@ class _HomePageState extends State<HomePage> {
       //print(banks[selectedBank].variants![e]);
       return banks[selectedBank].variants![e];
     }).toList();
+    print(vars);
     try {
-      QuerySnapshot q = await _firestore
-          .collection("offers")
-          .doc(banks[selectedBank].name)
-          .collection("variants")
-          .get();
+      QuerySnapshot q = await _firestore.collection("banks").doc(banks[selectedBank].name).collection("offers").get();
       List<Offer> offers = [];
       q.docs.forEach((doc) {
-        int index = vars.indexOf(doc.id);
+        // int index = vars.indexOf(doc.id);
         //print(doc.id);
         //print(index);
-        if (index != -1) {
-          if (doc.data() == null) throw ("Doc empty");
-          var d = (doc.data() as Map);
+        var d = doc.data() as Map;
+        print(d);
+        if (vars.indexOf(d["variant"]) != -1) {
           String desc = "Available with " +
               banks[selectedBank].name +
-              " " +
-              banks[selectedBank].variants![index] +
-              " Credit Card";
-          Offer o = Offer(
-              title: d["offer"], description: desc, promoCode: d["promoCode"]);
+              " " + d["variant"] + " Credit Card";
+          Offer o = Offer(title: d["title"], description: desc, promoCode: d["promoCode"]);
           offers.add(o);
         }
       });
@@ -101,7 +95,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 30 + 60, 0, 0),
               child: ShowUp(
-                delay: 1,
+                delay: Duration(seconds: 1),
                 child: Text(
                   "Welcome!",
                   textAlign: TextAlign.center,
@@ -116,7 +110,7 @@ class _HomePageState extends State<HomePage> {
             Padding(
               padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
               child: ShowUp(
-                delay: 1,
+                delay: Duration(seconds: 1),
                 child: Text(
                   "Please choose the banks you’re affiliated with:",
                   textAlign: TextAlign.center,
@@ -129,7 +123,7 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
             ShowUp(
-              delay: 1,
+              delay: Duration(seconds: 1),
               child: AnimatedContainer(
                 duration: Duration(milliseconds: 300),
                   height: MediaQuery.of(context).size.height - 30 - (26 * 2) - 90 - 30 - 30 - (selectedBank != -1 ? 53 : 0),

@@ -28,7 +28,7 @@ class _RecentScreenState extends State<RecentScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 30 + 60, 0, 0),
           child: ShowUp(
-            delay: 1,
+            delay: Duration(seconds: 1),
             child: Text(
               "Recently Used Offers",
               textAlign: TextAlign.center,
@@ -43,7 +43,7 @@ class _RecentScreenState extends State<RecentScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 5),
           child: ShowUp(
-            delay: 1,
+            delay: Duration(seconds: 1),
             child: Text(
               "Reuse them",
               textAlign: TextAlign.center,
@@ -58,7 +58,7 @@ class _RecentScreenState extends State<RecentScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: ShowUp(
-            delay: 1,
+            delay: Duration(seconds: 1),
             child: Container(
               height: 500,
               child: FutureBuilder(
@@ -165,7 +165,7 @@ class _RecentScreenState extends State<RecentScreen> {
         Padding(
           padding: const EdgeInsets.fromLTRB(0, 20, 0, 10),
           child: ShowUp(
-            delay: 1,
+            delay: Duration(seconds: 1),
             child: Text(
               " Or Checkout New Ones",
               textAlign: TextAlign.center,
@@ -184,7 +184,7 @@ class _RecentScreenState extends State<RecentScreen> {
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 10),
             child: ShowUp(
-              delay: 1,
+              delay: Duration(seconds: 1),
               child: Icon(
                 Icons.arrow_forward_ios,
                 color: Color.fromRGBO(104, 132, 95, 0.75),
