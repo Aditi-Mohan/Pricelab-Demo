@@ -4,7 +4,7 @@ A Flutter application following the Wireframe and Instructions provided.
 
 ## Additionally:
 
-Added Dashboard to the Application as outlined in the Brownie Points Tasks
+Added Dashboard to the Application as outlined in the Brownie Points Tasks <br>
 **Note:** The Dashboard interacts with the API while the rest of the app is directly contected to the Database.
 
 ## Getting Started
