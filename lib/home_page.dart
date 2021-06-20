@@ -220,8 +220,9 @@ class _HomePageState extends State<HomePage> {
                                               return Container(
                                                 height: 400 - 110,
                                                 child: ListView.builder(
-                                                    physics:
-                                                        NeverScrollableScrollPhysics(),
+                                                    physics: banks[i].variants!.length <= 4 ?
+                                                        NeverScrollableScrollPhysics()
+                                                    : AlwaysScrollableScrollPhysics(),
                                                     itemCount:
                                                         banks[i].variants!.length,
                                                     itemBuilder: (context, ind) {

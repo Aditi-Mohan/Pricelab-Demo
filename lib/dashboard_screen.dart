@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:pricelabdemo/bank_screen.dart';
 import 'package:http/http.dart' as http;
 
+import 'bank_screen.dart';
+import 'utils/showup_animation.dart';
 import 'models/bank.dart';
 
 class DashBoardScreen extends StatefulWidget {
@@ -37,162 +38,242 @@ class _DashBoardScreenState extends State<DashBoardScreen> {
               ),
             ),
           ),
-          Container(
-              height: MediaQuery.of(context).size.height - 100,
-              child: StreamBuilder(
-                  stream: _firestore.collection("banks").snapshots(),
-                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-                    if (snapshot.hasData) {
-                      List<DocumentSnapshot> banks = snapshot.data!.docs;
-                      return ListView.builder(
-                          itemCount: banks.length + 1,
-                          itemBuilder: (context, i) {
-                            if (i == banks.length) {
-                              return GestureDetector(
-                                onTap: () {
-                                  showDialog(context: context,
-                                    barrierDismissible: false,
-                                    builder: (context) => AlertDialog(
-                                      content: DialogBody(),
-                                    )
-                                  );
-                                },
-                                child: Container(
-                                  height: 70,
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      Text("Add Bank",
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.w400,
-                                          fontSize: 20,
-                                        ),
-                                      ),
-                                      Icon(Icons.add)
-                                    ],
-                                  ),
-                                ),
-                              );
-                            }
-                            else {
-                              return Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: GestureDetector(
+          ShowUp(
+            delay: Duration(milliseconds: 500),
+            child: Container(
+              height: 18*3,
+              //color: Colors.red,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(0, 18.0, 0, 0),
+                child: Text(
+                  "Press and Hold to Delete",
+                  style: TextStyle(
+                    color: Color.fromRGBO(104, 132, 95, 1),
+                    fontWeight: FontWeight.w400,
+                    fontSize: 18,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          ShowUp(
+            delay: Duration(milliseconds: 500),
+            child: Container(
+                height: MediaQuery.of(context).size.height - 100 - (18*3),
+                child: StreamBuilder(
+                    stream: _firestore.collection("banks").snapshots(),
+                    builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                      if (snapshot.hasData) {
+                        List<DocumentSnapshot> banks = snapshot.data!.docs;
+                        return ListView.builder(
+                            itemCount: banks.length + 1,
+                            itemBuilder: (context, i) {
+                              if (i == banks.length) {
+                                return GestureDetector(
                                   onTap: () {
                                     showDialog(context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text("View: "),
-                                      content: Container(
-                                        width: MediaQuery.of(context).size.width - 20,
-                                        height: 70,
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            ElevatedButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
-                                                ),
-                                                onPressed: ()  {
-                                                  Navigator.of(context).pop();
-                                                  Navigator.of(context).push(
-                                                      PageRouteBuilder(
-                                                          transitionDuration: Duration(milliseconds: 700),
-                                                          pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id, offers: false,)
-                                                      )
-                                                  );
-                                                },
-                                                child: Container(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                    child: Text("Variants",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.w400,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                            ),
-                                            ElevatedButton(
-                                                style: ButtonStyle(
-                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
-                                                ),
-                                                onPressed: ()  {
-                                                  Navigator.of(context).pop();
-                                                  Navigator.of(context).push(
-                                                      PageRouteBuilder(
-                                                          transitionDuration: Duration(milliseconds: 700),
-                                                          pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id, offers: true,)
-                                                      )
-                                                  );
-                                                },
-                                                child: Container(
-                                                  child: Padding(
-                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                                                    child: Text("Offers",
-                                                      style: TextStyle(
-                                                        color: Colors.white,
-                                                        fontWeight: FontWeight.w400,
-                                                        fontSize: 18,
-                                                      ),
-                                                    ),
-                                                  ),
-                                                )
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ));
+                                      barrierDismissible: false,
+                                      builder: (context) => AlertDialog(
+                                        content: DialogBody(),
+                                      )
+                                    );
                                   },
-                                  child: Hero(
-                                    tag: banks[i].id,
-                                    child: Container(
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                          BorderRadius.all(Radius.circular(5.0)),
-                                          border: Border.all(
-                                              color: Color.fromRGBO(193, 193, 193, 1)
+                                  child: Container(
+                                    height: 70,
+                                    child: Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Text("Add Bank",
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.w400,
+                                            fontSize: 20,
                                           ),
                                         ),
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(18.0),
+                                        Icon(Icons.add)
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              }
+                              else {
+                                return Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      showDialog(context: context,
+                                      builder: (context) => AlertDialog(
+                                        title: Text("View: "),
+                                        content: Container(
+                                          width: MediaQuery.of(context).size.width - 20,
+                                          height: 70,
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                             children: [
-                                              Material(
-                                                type: MaterialType.transparency,
-                                                child: Text(banks[i].id,
-                                                  style: TextStyle(
-                                                    color: Color.fromRGBO(104, 132, 95, 0.75),
-                                                    fontWeight: FontWeight.w400,
-                                                    fontSize: 20,
+                                              ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
                                                   ),
-                                                ),
+                                                  onPressed: ()  {
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).push(
+                                                        PageRouteBuilder(
+                                                            transitionDuration: Duration(milliseconds: 700),
+                                                            pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id, offers: false,)
+                                                        )
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                      child: Text("Variants",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
                                               ),
-                                              Text((banks[i].data()! as Map)["variants"].length.toString()+" Card"+((banks[i].data()! as Map)["variants"].length == 1 ? "" : "s"),
-                                                style: TextStyle(
-                                                  color: Color.fromRGBO(104, 132, 95, 0.75),
-                                                  fontWeight: FontWeight.w400,
-                                                  fontSize: 20,
-                                                ),
+                                              ElevatedButton(
+                                                  style: ButtonStyle(
+                                                    backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(25, 112, 80, 1)),
+                                                  ),
+                                                  onPressed: ()  {
+                                                    Navigator.of(context).pop();
+                                                    Navigator.of(context).push(
+                                                        PageRouteBuilder(
+                                                            transitionDuration: Duration(milliseconds: 700),
+                                                            pageBuilder: (_,__,___) => BankScreen(bank: banks[i].id, offers: true,)
+                                                        )
+                                                    );
+                                                  },
+                                                  child: Container(
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                      child: Text("Offers",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontWeight: FontWeight.w400,
+                                                          fontSize: 18,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                  )
                                               )
                                             ],
                                           ),
-                                        )
-                            ),
+                                        ),
+                                      ));
+                                    },
+                                    onLongPress: () {
+                                      showDialog(context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text(banks[i].id+" Bank"),
+                                            content: Text("Are you sure you want to Delete this Bank?"),
+                                            actions: [
+                                              ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(196, 196, 196, 1)),
+                                                ),
+                                                child: Container(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                    child: Text("CANCEL",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                              ElevatedButton(
+                                                style: ButtonStyle(
+                                                  backgroundColor: MaterialStateColor.resolveWith((states) => Colors.red),
+                                                ),
+                                                child: Container(
+                                                  child: Padding(
+                                                    padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                                    child: Text("DELETE",
+                                                      style: TextStyle(
+                                                        color: Colors.white,
+                                                        fontWeight: FontWeight.w400,
+                                                        fontSize: 18,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                onPressed: () async {
+                                                  String bank = banks[i].id;
+                                                  print(bank);
+                                                  String url = "https://us-central1-pricelabdemo.cloudfunctions.net/banks/"+bank;
+                                                  http.Response res = await http.delete(Uri.parse(url));
+                                                  if(res.statusCode != 200)
+                                                    print(res);
+                                                  Navigator.of(context).pop();
+                                                },
+                                              ),
+                                            ],
+                                          )
+                                      );
+                                    },
+                                    child: Hero(
+                                      tag: banks[i].id,
+                                      child: Container(
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                            BorderRadius.all(Radius.circular(5.0)),
+                                            border: Border.all(
+                                                color: Color.fromRGBO(193, 193, 193, 1)
+                                            ),
+                                          ),
+                                          child: Padding(
+                                            padding: const EdgeInsets.all(18.0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                              children: [
+                                                Material(
+                                                  type: MaterialType.transparency,
+                                                  child: Text(banks[i].id,
+                                                    style: TextStyle(
+                                                      color: Color.fromRGBO(104, 132, 95, 0.75),
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                ),
+                                                Material(
+                                                  type: MaterialType.transparency,
+                                                  child: Text((banks[i].data()! as Map)["variants"].length.toString()+" Card"+((banks[i].data()! as Map)["variants"].length == 1 ? "" : "s"),
+                                                    style: TextStyle(
+                                                      color: Color.fromRGBO(104, 132, 95, 0.75),
+                                                      fontWeight: FontWeight.w400,
+                                                      fontSize: 20,
+                                                    ),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          )
+                              ),
+                                    ),
                                   ),
-                                ),
-                              );
-                          }
-                          }
-                      );
+                                );
+                            }
+                            }
+                        );
+                      }
+                      else {
+                        return Container();
+                      }
                     }
-                    else {
-                      return Container();
-                    }
-                  }
-              )
+                )
+            ),
           )
         ],
       ),
