@@ -1,6 +1,10 @@
-# pricelabdemo
+# Pricelab Demo
 
-A new Flutter application.
+A Flutter application following the Wireframe and Instructions provided.
+
+## Additionally:
+
+Added Dashboard to the Application as outlined in the Brownie Points Tasks
 
 ## Getting Started
 
