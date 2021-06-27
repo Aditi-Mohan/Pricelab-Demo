@@ -2,13 +2,18 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:pricelabdemo/services/auth_service.dart';
 
+import 'recent_page.dart';
+import 'services/auth_service.dart';
 import 'utils/showup_animation.dart';
 import 'models/bank.dart';
 import 'models/offer.dart';
 
 class HomePage extends StatefulWidget {
+  final bool fromRecent;
+
+  HomePage({required this.fromRecent});
+
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -85,8 +90,20 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return WillPopScope(
       onWillPop: () async {
-        Navigator.of(context).pop(usedOffer);
-        return false;
+        if(widget.fromRecent) {
+          Navigator.of(context).pop(usedOffer);
+          return false;
+        }
+        else {
+          if(usedOffer) {
+            Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => RecentScreen()));
+            return false;
+          }
+          else {
+            return true;
+          }
+        }
       },
       child: Scaffold(
         key: _key,

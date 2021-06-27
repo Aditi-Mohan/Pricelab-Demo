@@ -179,7 +179,7 @@ class _RecentScreenState extends State<RecentScreen> {
         ),
         GestureDetector(
           onTap: () {
-            Navigator.of(context).push(NextPageRoute(nextScreen: HomePage())).then(onBack);
+            Navigator.of(context).push(NextPageRoute(nextScreen: HomePage(fromRecent: true,))).then(onBack);
           },
           child: Padding(
             padding: const EdgeInsets.fromLTRB(0, 8, 0, 10),

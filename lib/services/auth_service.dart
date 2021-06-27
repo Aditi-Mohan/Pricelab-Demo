@@ -15,6 +15,11 @@ class AuthService {
 
   Future<bool> signInWithGoogle() async {
     try {
+      bool isSignedIn = await _googleSignIn.isSignedIn();
+      print(isSignedIn);
+      if(isSignedIn) {
+        await _googleSignIn.signOut();
+      }
       final GoogleSignInAccount? googleSignInAccount = await _googleSignIn.signIn();
       if(googleSignInAccount == null) throw("Account not found!");
       final GoogleSignInAuthentication? googleSignInAuthentication = await googleSignInAccount.authentication;
@@ -77,14 +82,4 @@ class AuthService {
     return offers;
   }
 
-  Future<bool> signOut() async {
-    try {
-      await _firebaseAuth.signOut();
-      return true;
-    } catch (err) {
-      print('Error: $err');
-      message = err.toString();
-      return false;
-    }
-  }
 }
